@@ -3,13 +3,13 @@ import Constants from 'expo-constants';
 // Environment-based configuration
 const ENV = {
     dev: {
-        apiUrl: 'http://192.168.1.100:5000/api',
+        apiUrl: 'https://damini-mart.onrender.com/api',
     },
     staging: {
-        apiUrl: 'https://your-staging-api.com/api',
+        apiUrl: 'https://damini-mart.onrender.com/api',
     },
     prod: {
-        apiUrl: 'https://your-production-api.com/api',
+        apiUrl: 'https://damini-mart.onrender.com/api',
     }
 };
 
