@@ -98,6 +98,13 @@ export default function ProductDetails() {
             return;
         }
 
+        // Check if product has variants and none is selected
+        if (product?.variants && product.variants.length > 0 && !selectedVariant) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            Alert.alert('Error', 'Please select a variant');
+            return;
+        }
+
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         const result = await addToCart(
             product._id,

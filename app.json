@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "9ab527a9-5908-46c4-83ca-57cae68fc5f7"
+      }
+    },
+    "android": {
+      "package": "com.dharmabhai.daminimart"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Build profile (preview/production)'
+        required: false
+        default: 'preview'
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🏗 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        working-directory: ./mobile
+        run: npm ci
+
+      - name: 🔍 Validate EAS configuration
+        working-directory: ./mobile
+        run: |
+          if [ ! -f "eas.json" ]; then
+            echo "❌ eas.json not found!"
+            exit 1
+          fi
+          echo "✅ EAS configuration found"
+
+      - name: 🔍 Validate app.json
+        working-directory: ./mobile
+        run: |
+          if [ ! -f "app.json" ]; then
+            echo "❌ app.json not found!"
+            exit 1
+          fi
+          echo "✅ app.json found"
+
+      - name: 🚀 Build Android APK
+        working-directory: ./mobile
+        run: |
+          PROFILE="${{ github.event.inputs.profile || 'preview' }}"
+          echo "Building with profile: $PROFILE"
+          eas build --platform android --profile $PROFILE --non-interactive --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📊 Build Status
+        if: success()
+        run: |
+          echo "✅ Build submitted successfully!"
+          echo "📱 Check build status at: https://expo.dev"
+          echo "🔗 View your builds: https://expo.dev/accounts/[your-account]/projects/daminimart/builds"
+
+      - name: ❌ Build Failed
+        if: failure()
+        run: |
+          echo "Build submission failed. Please check the logs above."
+          echo "Common issues:"
+          echo "1. EXPO_TOKEN not set in repository secrets"
+          echo "2. EAS project not configured"
+          echo "3. Invalid eas.json or app.json configuration"
+          exit 1

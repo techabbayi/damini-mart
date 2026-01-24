@@ -37,8 +37,8 @@ export const useCartStore = create((set, get) => ({
     // Update cart item
     updateCartItem: async (productId, variantName, quantity) => {
         try {
-            const res = await api.put('/cart/item', { productId, variantName, quantity });
-            set({ cart: res.data.data });
+            const res = await api.put('/cart/update', { productId, variantName, quantity });
+            set({ cart: res.data.data?.cart || res.data.data });
             return { success: true };
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message || 'Failed to update cart';
@@ -49,8 +49,8 @@ export const useCartStore = create((set, get) => ({
     // Remove from cart
     removeFromCart: async (productId, variantName = null) => {
         try {
-            const res = await api.delete('/cart/item', { data: { productId, variantName } });
-            set({ cart: res.data.data });
+            const res = await api.delete('/cart/remove', { data: { productId, variantName } });
+            set({ cart: res.data.data?.cart || res.data.data });
             return { success: true };
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message || 'Failed to remove item';

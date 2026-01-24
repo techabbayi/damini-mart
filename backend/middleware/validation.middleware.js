@@ -104,8 +104,21 @@ export const createOrderValidation = [
     body('items.*.quantity')
         .isInt({ min: 1 }).withMessage('Quantity must be at least 1'),
     body('deliveryAddress')
-        .notEmpty().withMessage('Delivery address is required'),
+        .notEmpty().withMessage('Delivery address is required')
+        .isObject().withMessage('Delivery address must be an object'),
+    body('deliveryAddress.fullName')
+        .optional()
+        .trim()
+        .notEmpty().withMessage('Full name is required in delivery address'),
+    body('deliveryAddress.phone')
+        .optional()
+        .trim()
+        .notEmpty().withMessage('Phone is required in delivery address'),
+    body('payment')
+        .optional()
+        .isObject().withMessage('Payment must be an object'),
     body('payment.method')
+        .optional()
         .isIn(['cod', 'online', 'card', 'upi', 'wallet']).withMessage('Invalid payment method'),
     validate
 ];

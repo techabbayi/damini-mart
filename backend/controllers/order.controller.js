@@ -11,6 +11,23 @@ import { asyncHandler, ErrorResponse } from '../middleware/error.middleware.js';
 export const createOrder = asyncHandler(async (req, res) => {
     const { items, deliveryAddress, payment, deliverySlot, notes } = req.body;
 
+    if (!deliveryAddress) {
+        throw new ErrorResponse('Please select a delivery address', 400);
+    }
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+        throw new ErrorResponse('Cart is empty', 400);
+    }
+
+    // Ensure payment method defaults to cod
+    const paymentInfo = payment || { method: 'cod', status: 'pending' };
+    if (!paymentInfo.method) {
+        paymentInfo.method = 'cod';
+    }
+    if (!paymentInfo.status) {
+        paymentInfo.status = 'pending';
+    }
+
     // Validate items and calculate totals
     let subtotal = 0;
     const orderItems = [];
@@ -26,24 +43,25 @@ export const createOrder = asyncHandler(async (req, res) => {
         let stock = product.stock;
         let variantName = null;
 
-        if (item.variant) {
+        // If product has variants, variant selection is required
+        if (product.variants && product.variants.length > 0) {
+            if (!item.variant) {
+                throw new ErrorResponse(`Please select a variant for ${product.name}`, 400);
+            }
+
             const variant = product.variants.find(v => v.name === item.variant);
             if (!variant) {
-                throw new ErrorResponse(`Variant ${item.variant} not found`, 404);
+                throw new ErrorResponse(`Variant "${item.variant}" not found for ${product.name}`, 404);
             }
             price = variant.price;
             stock = variant.stock;
             variantName = variant.name;
         }
 
-        // Check stock (only if stock is a number, not null/undefined)
+        // Check stock availability
         if (typeof stock === 'number' && stock < item.quantity) {
-            throw new ErrorResponse(`Insufficient stock for ${product.name}`, 400);
-        }
-
-        // If stock is null/undefined, it means product has variants but no variant was selected
-        if (stock === null || stock === undefined) {
-            throw new ErrorResponse(`Please select a variant for ${product.name}`, 400);
+            const variantInfo = variantName ? ` (${variantName})` : '';
+            throw new ErrorResponse(`Insufficient stock for ${product.name}${variantInfo}. Only ${stock} available.`, 400);
         }
 
         const itemTotal = price * item.quantity;
@@ -102,7 +120,7 @@ export const createOrder = asyncHandler(async (req, res) => {
             tax,
             total
         },
-        payment,
+        payment: paymentInfo,
         deliverySlot,
         appliedCoupon,
         notes

@@ -7,31 +7,39 @@
             "developmentClient": true,
             "distribution": "internal",
             "android": {
-                "buildType": "apk"
+                "buildType": "apk",
+                "image": "latest"
             },
-            "env": {
-                "API_URL": "http://192.168.1.100:5000/api"
-            }
+            "channel": "development"
         },
         "preview": {
             "distribution": "internal",
             "android": {
-                "buildType": "apk"
+                "buildType": "apk",
+                "image": "latest"
             },
-            "env": {
-                "API_URL": "https://your-staging-api.com/api"
-            }
+            "channel": "preview"
         },
         "production": {
             "android": {
-                "buildType": "apk"
+                "buildType": "apk",
+                "image": "latest"
             },
-            "env": {
-                "API_URL": "https://your-production-api.com/api"
-            }
+            "channel": "production"
         }
     },
     "submit": {
         "production": {}
+    },
+    "update": {
+        "production": {
+            "channel": "production"
+        },
+        "preview": {
+            "channel": "preview"
+        },
+        "development": {
+            "channel": "development"
+        }
     }
 }

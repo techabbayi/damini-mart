@@ -44,17 +44,23 @@ export const addToCart = asyncHandler(async (req, res) => {
     let price = product.price;
     let availableStock = product.stock;
 
-    if (variantName) {
+    // If product has variants, variant is required
+    if (product.variants && product.variants.length > 0) {
+        if (!variantName) {
+            throw new ErrorResponse(`Please select a variant for ${product.name}`, 400);
+        }
+
         const variant = product.variants.find(v => v.name === variantName);
         if (!variant) {
-            throw new ErrorResponse('Variant not found', 404);
+            throw new ErrorResponse(`Variant "${variantName}" not found`, 404);
         }
         price = variant.price;
         availableStock = variant.stock;
     }
 
-    if (availableStock < quantity) {
-        throw new ErrorResponse('Insufficient stock', 400);
+    if (typeof availableStock === 'number' && availableStock < quantity) {
+        const variantInfo = variantName ? ` (${variantName})` : '';
+        throw new ErrorResponse(`Insufficient stock for ${product.name}${variantInfo}. Only ${availableStock} available.`, 400);
     }
 
     // Get or create cart
@@ -102,15 +108,25 @@ export const updateCartItem = asyncHandler(async (req, res) => {
 
     // Check stock
     const product = await Product.findById(productId);
+
+    if (!product) {
+        throw new ErrorResponse('Product not found', 404);
+    }
+
     let availableStock = product.stock;
+    let productName = product.name;
 
     if (variantName) {
         const variant = product.variants.find(v => v.name === variantName);
-        availableStock = variant ? variant.stock : 0;
+        if (!variant) {
+            throw new ErrorResponse(`Variant "${variantName}" not found`, 404);
+        }
+        availableStock = variant.stock;
     }
 
-    if (availableStock < quantity) {
-        throw new ErrorResponse('Insufficient stock', 400);
+    if (typeof availableStock === 'number' && availableStock < quantity) {
+        const variantInfo = variantName ? ` (${variantName})` : '';
+        throw new ErrorResponse(`Insufficient stock for ${productName}${variantInfo}. Only ${availableStock} available.`, 400);
     }
 
     // Update quantity

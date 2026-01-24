@@ -1,0 +1,7 @@
+**/.gradle
+**/build
+android/.gradle/**
+android/build/**
+android/app/build/**
+.gradle/**
+*.lock

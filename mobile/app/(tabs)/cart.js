@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCartStore } from '../../store/cartStore';
 import { useAuthStore } from '../../store/authStore';
+import * as Haptics from 'expo-haptics';
 
 export default function Cart() {
     const { cart, fetchCart, updateCartItem, removeFromCart, clearCart } = useCartStore();
@@ -19,11 +20,22 @@ export default function Cart() {
 
     const handleUpdateQuantity = async (item, newQuantity) => {
         if (newQuantity < 1) return;
-        await updateCartItem(item.product._id, item.variantName, newQuantity);
+        const result = await updateCartItem(item.product._id, item.variantName, newQuantity);
+        if (!result.success) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            Alert.alert('Error', result.error || 'Failed to update quantity');
+            fetchCart(); // Refresh cart to show correct quantity
+        }
     };
 
     const handleRemoveItem = async (item) => {
-        await removeFromCart(item.product._id, item.variantName);
+        const result = await removeFromCart(item.product._id, item.variantName);
+        if (!result.success) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            Alert.alert('Error', result.error || 'Failed to remove item');
+        } else {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
     };
 
     const handleClearCart = async () => {
@@ -134,20 +146,47 @@ export default function Cart() {
 
                 {/* Cart Summary */}
                 <View style={styles.summaryContainer}>
+                    <Text style={styles.summaryTitle}>Order Summary</Text>
+
                     <View style={styles.summaryRow}>
-                        <Text style={styles.summaryLabel}>Subtotal</Text>
+                        <Text style={styles.summaryLabel}>Items ({cart.items?.length || 0})</Text>
                         <Text style={styles.summaryValue}>₹{cart.pricing?.subtotal || cart.subtotal || 0}</Text>
                     </View>
+
+                    {(cart.pricing?.deliveryCharge || 0) > 0 && (
+                        <View style={styles.summaryRow}>
+                            <Text style={styles.summaryLabel}>Delivery Charges</Text>
+                            <Text style={styles.summaryValue}>₹{cart.pricing?.deliveryCharge || 0}</Text>
+                        </View>
+                    )}
+
+                    {(cart.pricing?.deliveryCharge === 0) && (
+                        <View style={styles.summaryRow}>
+                            <Text style={styles.summaryLabel}>Delivery Charges</Text>
+                            <Text style={[styles.summaryValue, styles.freeText]}>FREE</Text>
+                        </View>
+                    )}
+
                     {(cart.pricing?.discount || cart.discount || 0) > 0 && (
                         <View style={styles.summaryRow}>
                             <Text style={[styles.summaryLabel, styles.discountText]}>Discount</Text>
                             <Text style={[styles.summaryValue, styles.discountText]}>-₹{cart.pricing?.discount || cart.discount || 0}</Text>
                         </View>
                     )}
+
+                    <View style={styles.divider} />
+
                     <View style={[styles.summaryRow, styles.totalRow]}>
-                        <Text style={styles.totalLabel}>Total</Text>
+                        <Text style={styles.totalLabel}>Total Amount</Text>
                         <Text style={styles.totalValue}>₹{cart.pricing?.total || cart.total || 0}</Text>
                     </View>
+
+                    {cart.pricing?.subtotal < 500 && (
+                        <Text style={styles.freeDeliveryHint}>
+                            Add ₹{500 - (cart.pricing?.subtotal || 0)} more for FREE delivery!
+                        </Text>
+                    )}
+
                     <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
                         <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
                         <Ionicons name="arrow-forward" size={20} color="#fff" />
@@ -290,6 +329,12 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#e5e7eb',
     },
+    summaryTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#1f2937',
+        marginBottom: 16,
+    },
     summaryRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -304,14 +349,22 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#1f2937',
     },
+    freeText: {
+        color: '#10b981',
+        fontWeight: 'bold',
+    },
     discountText: {
         color: '#10b981',
     },
+    divider: {
+        height: 1,
+        backgroundColor: '#e5e7eb',
+        marginVertical: 12,
+    },
     totalRow: {
-        borderTopWidth: 1,
-        borderTopColor: '#e5e7eb',
-        paddingTop: 12,
-        marginTop: 4,
+        borderTopWidth: 0,
+        paddingTop: 0,
+        marginTop: 0,
     },
     totalLabel: {
         fontSize: 18,
@@ -322,6 +375,14 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         color: '#f97316',
+    },
+    freeDeliveryHint: {
+        fontSize: 12,
+        color: '#f97316',
+        textAlign: 'center',
+        marginBottom: 12,
+        fontWeight: '500',
+        marginTop: 8,
     },
     checkoutButton: {
         backgroundColor: '#f97316',

@@ -100,8 +100,9 @@ export default function Checkout() {
                 ]
             );
         },
-        onError: () => {
-            Alert.alert('Error', 'Failed to place order. Please try again.');
+        onError: (error) => {
+            const errorMsg = error.response?.data?.message || 'Failed to place order. Please try again.';
+            Alert.alert('Oops! Something went wrong', errorMsg);
         },
     });
 
@@ -185,7 +186,10 @@ export default function Checkout() {
                 price: item.price,
             })),
             deliveryAddress: selectedAddress,
-            paymentMethod,
+            payment: {
+                method: paymentMethod || 'cod',
+                status: 'pending'
+            },
             couponCode: appliedCoupon?.code,
         };
 

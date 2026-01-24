@@ -1,8 +1,9 @@
-import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import api from '../../lib/api';
 
 export default function OrderDetails() {
@@ -13,9 +14,19 @@ export default function OrderDetails() {
         queryKey: ['order', id],
         queryFn: async () => {
             const res = await api.get(`/orders/${id}`);
-            return res.data.data;
+            return res.data.data?.order || res.data.data;
         },
     });
+
+    const handleWhatsAppContact = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        const phoneNumber = '919390639065'; // Damini Mart contact
+        const message = `Hi, I need help with my order #${order?.orderNumber || id}`;
+        const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+        Linking.openURL(url).catch(() => {
+            alert('Please install WhatsApp to contact us');
+        });
+    };
 
     const getStatusColor = (status) => {
         const colors = {
@@ -188,8 +199,27 @@ export default function OrderDetails() {
                             <View style={styles.summaryRow}>
                                 <Text style={styles.summaryLabel}>Payment Method</Text>
                                 <Text style={styles.summaryValue}>
-                                    {order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}
+                                    {order.payment?.method === 'cod' || order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}
                                 </Text>
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* Contact Support */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Need Help?</Text>
+                        <TouchableOpacity style={styles.whatsappButton} onPress={handleWhatsAppContact}>
+                            <Ionicons name="logo-whatsapp" size={24} color="#fff" />
+                            <Text style={styles.whatsappButtonText}>Contact Damini Mart on WhatsApp</Text>
+                        </TouchableOpacity>
+                        <View style={styles.contactInfo}>
+                            <View style={styles.contactRow}>
+                                <Ionicons name="call-outline" size={20} color="#f97316" />
+                                <Text style={styles.contactText}>+91 93906 39065</Text>
+                            </View>
+                            <View style={styles.contactRow}>
+                                <Ionicons name="time-outline" size={20} color="#f97316" />
+                                <Text style={styles.contactText}>Mon-Sat: 8 AM - 10 PM</Text>
                             </View>
                         </View>
                     </View>
@@ -390,5 +420,35 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: '#f97316',
+    },
+    whatsappButton: {
+        backgroundColor: '#25D366',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+        borderRadius: 12,
+        gap: 8,
+    },
+    whatsappButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    contactInfo: {
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 16,
+        marginTop: 12,
+        gap: 12,
+    },
+    contactRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    contactText: {
+        fontSize: 14,
+        color: '#4b5563',
     },
 });

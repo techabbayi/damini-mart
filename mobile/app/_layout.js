@@ -8,6 +8,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ErrorBoundary from '../components/ErrorBoundary';
+import UpdateChecker from '../components/UpdateChecker';
 import notificationService from '../lib/notificationService';
 
 // Keep the splash screen visible while we fetch resources
@@ -116,6 +117,7 @@ export default function RootLayout() {
                 <SafeAreaProvider>
                     <QueryClientProvider client={queryClient}>
                         <StatusBar style="light" />
+                        <UpdateChecker />
                         <Slot />
                     </QueryClientProvider>
                 </SafeAreaProvider>
