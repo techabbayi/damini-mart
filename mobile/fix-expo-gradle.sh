@@ -17,18 +17,49 @@ if [ -f "$EXPO_PLUGIN_FILE" ]; then
   echo "   ✅ ExpoModulesCorePlugin patched"
 fi
 
-# Fix 2: Patch expo-eas-client build.gradle
+# Fix 2: Replace expo-eas-client build.gradle with working version
 EAS_CLIENT_BUILD="node_modules/expo-eas-client/android/build.gradle"
 if [ -f "$EAS_CLIENT_BUILD" ]; then
-  echo "📝 Patching expo-eas-client build.gradle..."
+  echo "📝 Replacing expo-eas-client build.gradle..."
   cp "$EAS_CLIENT_BUILD" "${EAS_CLIENT_BUILD}.backup" 2>/dev/null || true
   
-  # Replace the plugin line with a comment
-  sed -i.bak "s/id 'expo-module-gradle-plugin'/\/\/ PATCHED: id 'expo-module-gradle-plugin'/" "$EAS_CLIENT_BUILD" 2>/dev/null || \
-  sed -i '' "s/id 'expo-module-gradle-plugin'/\/\/ PATCHED: id 'expo-module-gradle-plugin'/" "$EAS_CLIENT_BUILD" 2>/dev/null || \
-  perl -pi -e "s/id 'expo-module-gradle-plugin'/\/\/ PATCHED: id 'expo-module-gradle-plugin'/" "$EAS_CLIENT_BUILD" 2>/dev/null
+  # Create a minimal working build.gradle
+  cat > "$EAS_CLIENT_BUILD" << 'EOF'
+// PATCHED VERSION - Simplified to avoid gradle plugin issues
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+group = 'expo.modules.easclient'
+version = '0.1.0'
+
+def expoModulesCorePlugin = new File(project(":expo-modules-core").projectDir.absolutePath, "ExpoModulesCorePlugin.gradle")
+apply from: expoModulesCorePlugin
+
+android {
+  compileSdkVersion safeExtGet("compileSdkVersion", 34)
+  namespace "expo.modules.easclient"
+  defaultConfig {
+    minSdkVersion safeExtGet("minSdkVersion", 23)
+    targetSdkVersion safeExtGet("targetSdkVersion", 34)
+    versionCode 1
+    versionName "0.1.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation project(':expo-modules-core')
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${getKotlinVersion()}"
+}
+EOF
   
-  echo "   ✅ expo-eas-client patched"
+  echo "   ✅ expo-eas-client build.gradle replaced"
 fi
 
 echo "✅ All Expo Gradle patches applied successfully!"
