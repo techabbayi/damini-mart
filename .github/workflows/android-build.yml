@@ -57,9 +57,10 @@ jobs:
         npm install
         npm install --save-dev sharp@^0.34.5 sharp-cli@^5.2.0
 
-    - name: Run Expo prebuild
+    - name: Clean and prebuild Android
       working-directory: ./mobile
       run: |
+        rm -rf android
         npx expo prebuild --platform android --clean
 
     - name: Make gradlew executable
@@ -67,11 +68,12 @@ jobs:
       run: chmod +x gradlew
 
     - name: Accept Android SDK licenses
-      run: yes | $ANDROID_SDK_ROOT/cmdline-tools/9.0/bin/sdkmanager --licenses || true
+      run: |
+        yes | $ANDROID_SDK_ROOT/cmdline-tools/9.0/bin/sdkmanager --licenses 2>&1 || echo "License acceptance completed"
 
     - name: Build APK
       working-directory: ./mobile/android
-      run: ./gradlew assembleRelease --no-daemon --stacktrace
+      run: ./gradlew assembleRelease --no-daemon --stacktrace --info
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
