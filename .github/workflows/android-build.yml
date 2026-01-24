@@ -57,12 +57,6 @@ jobs:
         npm install
         npm install --save-dev sharp@^0.34.5 sharp-cli@^5.2.0
 
-    - name: Clean and prebuild Android
-      working-directory: ./mobile
-      run: |
-        rm -rf android
-        npx expo prebuild --platform android --clean
-
     - name: Make gradlew executable
       working-directory: ./mobile/android
       run: chmod +x gradlew
