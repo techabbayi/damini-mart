@@ -5,16 +5,20 @@
 EXPO_PLUGIN_FILE="node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle"
 
 if [ -f "$EXPO_PLUGIN_FILE" ]; then
-  echo "Patching ExpoModulesCorePlugin.gradle..."
+  echo "🔧 Patching ExpoModulesCorePlugin.gradle..."
   
   # Backup original file
-  cp "$EXPO_PLUGIN_FILE" "${EXPO_PLUGIN_FILE}.backup"
+  cp "$EXPO_PLUGIN_FILE" "${EXPO_PLUGIN_FILE}.backup" 2>/dev/null || true
   
-  # Replace the problematic section
-  sed -i 's/from components\.release/\/\/ from components.release/' "$EXPO_PLUGIN_FILE" 2>/dev/null || \
-  sed -i '' 's/from components\.release/\/\/ from components.release/' "$EXPO_PLUGIN_FILE" 2>/dev/null
+  # Comment out the problematic line that references 'components.release'
+  sed -i.bak 's/from components\.release/\/\/ PATCHED: from components.release/' "$EXPO_PLUGIN_FILE" 2>/dev/null || \
+  sed -i '' 's/from components\.release/\/\/ PATCHED: from components.release/' "$EXPO_PLUGIN_FILE" 2>/dev/null || \
+  perl -pi -e 's/from components\.release/\/\/ PATCHED: from components.release/' "$EXPO_PLUGIN_FILE" 2>/dev/null
   
-  echo "✅ Patched successfully"
+  echo "✅ Expo modules patch applied successfully"
+  echo "📄 Patched file: $EXPO_PLUGIN_FILE"
 else
-  echo "⚠️  ExpoModulesCorePlugin.gradle not found - install dependencies first"
+  echo "⚠️  ExpoModulesCorePlugin.gradle not found"
+  echo "💡 Make sure to run 'npm install' first"
+  exit 1
 fi
