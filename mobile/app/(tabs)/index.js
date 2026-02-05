@@ -9,7 +9,9 @@ import { useCartStore } from '../../store/cartStore';
 import { ProductListSkeleton } from '../../components/SkeletonLoader';
 import ErrorRetry from '../../components/ErrorRetry';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
+const BANNER_HEIGHT = Math.min(height * 0.22, 200); // 22% of screen height, max 200px
+const PRODUCT_IMAGE_HEIGHT = Math.min((width * 0.48 - 24) * 0.75, 140); // 75% of card width, max 140px
 const BANNER_IMAGES = [
     'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800',
     'https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?w=800',
@@ -82,7 +84,7 @@ export default function Home() {
     };
 
     return (
-        <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
+        <View style={styles.container}>
             <ScrollView
                 style={styles.container}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -255,7 +257,7 @@ const styles = StyleSheet.create({
         color: '#1f2937',
     },
     carouselContainer: {
-        height: 180,
+        height: BANNER_HEIGHT,
         marginTop: 16,
         marginHorizontal: 16,
         borderRadius: 12,
@@ -263,7 +265,7 @@ const styles = StyleSheet.create({
     },
     bannerImage: {
         width: width - 32,
-        height: 180,
+        height: BANNER_HEIGHT,
         resizeMode: 'cover',
     },
     pagination: {
@@ -339,7 +341,7 @@ const styles = StyleSheet.create({
     },
     productImage: {
         width: '100%',
-        height: 120,
+        height: PRODUCT_IMAGE_HEIGHT,
         borderRadius: 8,
         marginBottom: 8,
     },

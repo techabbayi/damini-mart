@@ -1,19 +1,32 @@
 import { Link } from 'react-router-dom';
-import { FiShoppingCart, FiUser, FiMenu, FiSearch } from 'react-icons/fi';
+import { FiShoppingCart, FiUser, FiMenu, FiSearch, FiX } from 'react-icons/fi';
 import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Header() {
     const { isAuthenticated, user, logout } = useAuthStore();
     const { fetchCart, getCartCount } = useCartStore();
     const cartCount = getCartCount();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         if (isAuthenticated) {
             fetchCart();
         }
     }, [isAuthenticated, fetchCart]);
+
+    // Close mobile menu when clicking outside
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [mobileMenuOpen]);
 
     return (
         <header className="bg-white shadow-md sticky top-0 z-50">
@@ -121,8 +134,12 @@ export default function Header() {
                             </div>
                         )}
 
-                        {/* Mobile Menu */}
-                        <button className="md:hidden p-2">
+                        {/* Mobile Menu Button */}
+                        <button 
+                            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition"
+                            onClick={() => setMobileMenuOpen(true)}
+                            aria-label="Open menu"
+                        >
                             <FiMenu className="text-2xl text-gray-700" />
                         </button>
                     </div>
@@ -178,6 +195,179 @@ export default function Header() {
                     </div>
                 </div>
             </nav>
+
+            {/* Mobile Menu Drawer */}
+            {mobileMenuOpen && (
+                <>
+                    {/* Backdrop */}
+                    <div 
+                        className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden"
+                        onClick={() => setMobileMenuOpen(false)}
+                    />
+                    
+                    {/* Drawer */}
+                    <div className="fixed top-0 right-0 bottom-0 w-80 max-w-full bg-white shadow-xl z-50 md:hidden overflow-y-auto">
+                        {/* Drawer Header */}
+                        <div className="bg-orange text-white p-4 flex items-center justify-between">
+                            <h2 className="text-xl font-bold">Menu</h2>
+                            <button 
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="p-2 hover:bg-orange-600 rounded-lg transition"
+                                aria-label="Close menu"
+                            >
+                                <FiX className="text-2xl" />
+                            </button>
+                        </div>
+
+                        {/* Drawer Content */}
+                        <div className="p-4">
+                            {/* User Info or Auth Buttons */}
+                            {isAuthenticated ? (
+                                <div className="mb-6 pb-6 border-b border-gray-200">
+                                    <div className="flex items-center space-x-3 mb-4">
+                                        <div className="w-12 h-12 bg-orange rounded-full flex items-center justify-center">
+                                            <FiUser className="text-white text-xl" />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-gray-900">{user?.name}</p>
+                                            <p className="text-sm text-gray-500">{user?.email}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="mb-6 pb-6 border-b border-gray-200 space-y-2">
+                                    <Link
+                                        to="/login"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block w-full px-4 py-2 text-center font-medium text-orange border border-orange rounded-lg hover:bg-orange hover:text-white transition-all"
+                                    >
+                                        Login
+                                    </Link>
+                                    <Link
+                                        to="/register"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block w-full px-4 py-2 text-center font-medium text-white bg-orange rounded-lg hover:bg-orange-600 transition-all"
+                                    >
+                                        Sign Up
+                                    </Link>
+                                </div>
+                            )}
+
+                            {/* Navigation Links */}
+                            <nav className="space-y-1 mb-6">
+                                <Link
+                                    to="/"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                >
+                                    Home
+                                </Link>
+                                <Link
+                                    to="/products"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                >
+                                    All Products
+                                </Link>
+                                <Link
+                                    to="/cart"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition flex items-center justify-between"
+                                >
+                                    <span>Cart</span>
+                                    {cartCount > 0 && (
+                                        <span className="bg-orange text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </Link>
+                            </nav>
+
+                            {/* Categories */}
+                            <div className="mb-6">
+                                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2 px-4">Categories</h3>
+                                <div className="space-y-1">
+                                    <Link
+                                        to="/products?category=fruits"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                    >
+                                        Fruits & Vegetables
+                                    </Link>
+                                    <Link
+                                        to="/products?category=grocery"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                    >
+                                        Grocery
+                                    </Link>
+                                    <Link
+                                        to="/products?category=dairy"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                    >
+                                        Dairy Products
+                                    </Link>
+                                    <Link
+                                        to="/products?category=snacks"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                    >
+                                        Snacks
+                                    </Link>
+                                    <Link
+                                        to="/products?category=beverages"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                    >
+                                        Beverages
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* User Actions */}
+                            {isAuthenticated && (
+                                <div className="pt-6 border-t border-gray-200">
+                                    <div className="space-y-1">
+                                        <Link
+                                            to="/account"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                        >
+                                            My Account
+                                        </Link>
+                                        <Link
+                                            to="/orders"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                        >
+                                            My Orders
+                                        </Link>
+                                        {['cashier', 'manager', 'admin'].includes(user?.role) && (
+                                            <Link
+                                                to="/admin"
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                            >
+                                                Admin Panel
+                                            </Link>
+                                        )}
+                                        <button
+                                            onClick={() => {
+                                                logout();
+                                                setMobileMenuOpen(false);
+                                            }}
+                                            className="block w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition"
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </>
+            )}
         </header>
     );
 }

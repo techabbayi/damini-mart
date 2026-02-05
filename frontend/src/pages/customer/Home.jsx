@@ -30,14 +30,14 @@ export default function Home() {
                 <div className="container mx-auto px-4 py-16">
                     <div className="flex flex-col md:flex-row items-center justify-between">
                         <div className="md:w-1/2 mb-8 md:mb-0">
-                            <h1 className="text-5xl font-bold text-gray-900 mb-4">
+                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
                                 Everything You Need
                                 <span className="text-orange"> Delivered to Your Door</span>
                             </h1>
-                            <p className="text-xl text-gray-600 mb-6">
+                            <p className="text-lg md:text-xl text-gray-600 mb-6">
                                 Home essentials, toys, gifts & more. Free delivery on orders above ₹500
                             </p>
-                            <Link to="/products" className="btn-primary text-lg px-8 py-3 inline-block">
+                            <Link to="/products" className="btn-primary text-base md:text-lg px-6 md:px-8 py-2 md:py-3 inline-block">
                                 Shop Now
                             </Link>
                         </div>
@@ -137,11 +137,11 @@ export default function Home() {
             </section>
 
             {/* CTA Section */}
-            <section className="bg-orange text-white py-16">
+            <section className="bg-orange text-white py-12 md:py-16">
                 <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-3xl font-bold mb-4">Start Shopping Today!</h2>
-                    <p className="text-xl mb-8">Join thousands of happy customers</p>
-                    <Link to="/register" className="bg-white text-orange px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition inline-block">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Start Shopping Today!</h2>
+                    <p className="text-lg md:text-xl mb-6 md:mb-8">Join thousands of happy customers</p>
+                    <Link to="/register" className="bg-white text-orange px-6 md:px-8 py-2 md:py-3 rounded-lg font-semibold hover:bg-gray-100 transition inline-block">
                         Create Account
                     </Link>
                 </div>
