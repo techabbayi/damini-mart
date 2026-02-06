@@ -3,7 +3,7 @@ import { Platform, Alert } from 'react-native';
 
 export async function shareProduct(product) {
     try {
-        const message = `Check out ${product.name} on Damini Mart!\n\nPrice: ₹${product.price}\n\nDownload the app to order now!`;
+        const message = `Check out ${product.name} on LocalBazar!\n\nPrice: ₹${product.price}\n\nDownload the app to order now!`;
 
         if (Platform.OS === 'web') {
             if (navigator.share) {
@@ -37,7 +37,7 @@ export async function shareProduct(product) {
 
 export async function shareOrder(order) {
     try {
-        const message = `My Order #${order.orderNumber} from Damini Mart\n\nTotal: ₹${order.pricing?.total || 0}\nStatus: ${order.status}\n\nDownload Damini Mart app to place your order!`;
+        const message = `My Order #${order.orderNumber} from LocalBazar\n\nTotal: ₹${order.pricing?.total || 0}\nStatus: ${order.status}\n\nDownload LocalBazar app to place your order!`;
 
         if (Platform.OS === 'web') {
             if (navigator.share) {

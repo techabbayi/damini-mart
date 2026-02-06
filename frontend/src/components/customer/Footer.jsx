@@ -9,7 +9,7 @@ export default function Footer() {
                     {/* About */}
                     <div>
                         <h3 className="text-xl font-bold mb-4">
-                            Damini <span className="text-orange">Mart</span>
+                            Local<span className="text-orange">Bazar</span>
                         </h3>
                         <p className="text-gray-400 text-sm">
                             Your trusted online supermarket for fresh groceries, daily essentials, and more. Quality products delivered to your doorstep.
@@ -99,7 +99,7 @@ export default function Footer() {
 
                 {/* Bottom Bar */}
                 <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-                    <p>&copy; 2026 Damini Mart. All rights reserved.</p>
+                    <p>&copy; 2026 LocalBazar. All rights reserved.</p>
                     <div className="mt-2 space-x-4">
                         <a href="#" className="hover:text-orange transition">
                             Privacy Policy

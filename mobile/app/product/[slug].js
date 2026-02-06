@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Dimensions } from 'react-native';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -10,6 +10,9 @@ import api from '../../lib/api';
 import { useCartStore } from '../../store/cartStore';
 import { useAuthStore } from '../../store/authStore';
 import { shareProduct } from '../../lib/sharing';
+
+const { width, height } = Dimensions.get('window');
+const PRODUCT_IMAGE_HEIGHT = Math.min(height * 0.4, 400); // 40% of screen height, max 400px
 
 export default function ProductDetails() {
     const { slug } = useLocalSearchParams();
@@ -413,7 +416,7 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         backgroundColor: '#f9fafb',
-        height: 300,
+        height: PRODUCT_IMAGE_HEIGHT,
         justifyContent: 'center',
         alignItems: 'center',
     },

@@ -9,6 +9,9 @@ export default function Account() {
     const { user, isAuthenticated, logout } = useAuthStore();
     const [activeTab, setActiveTab] = useState('profile');
     const insets = useSafeAreaInsets();
+    
+    // Check if user has admin/manager/cashier role
+    const isAdmin = user?.role && ['admin', 'manager', 'cashier'].includes(user.role);
 
     if (!isAuthenticated) {
         return (
@@ -52,6 +55,50 @@ export default function Account() {
                 </View>
 
                 <ScrollView style={styles.content}>
+                    {/* Admin Section - Only show for admin/manager/cashier */}
+                    {isAdmin && (
+                        <View style={styles.adminSection}>
+                            <View style={styles.adminBanner}>
+                                <Ionicons name="shield-checkmark" size={24} color="#fff" />
+                                <Text style={styles.adminBannerText}>Admin Panel</Text>
+                            </View>
+                            
+                            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/admin/dashboard')}>
+                                <View style={styles.menuItemLeft}>
+                                    <Ionicons name="stats-chart" size={24} color="#3b82f6" />
+                                    <Text style={styles.menuItemText}>Dashboard</Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/admin/orders')}>
+                                <View style={styles.menuItemLeft}>
+                                    <Ionicons name="cart" size={24} color="#3b82f6" />
+                                    <Text style={styles.menuItemText}>Manage Orders</Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/admin/products')}>
+                                <View style={styles.menuItemLeft}>
+                                    <Ionicons name="cube" size={24} color="#3b82f6" />
+                                    <Text style={styles.menuItemText}>Manage Products</Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+                            </TouchableOpacity>
+
+                            {user?.role === 'admin' && (
+                                <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/admin/users')}>
+                                    <View style={styles.menuItemLeft}>
+                                        <Ionicons name="people" size={24} color="#3b82f6" />
+                                        <Text style={styles.menuItemText}>Manage Users</Text>
+                                    </View>
+                                    <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    )}
+
                     {/* Menu Items */}
                     <View style={styles.menuSection}>
                         <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/account/profile')}>
@@ -82,6 +129,14 @@ export default function Account() {
                             <View style={styles.menuItemLeft}>
                                 <Ionicons name="heart-outline" size={24} color="#f97316" />
                                 <Text style={styles.menuItemText}>Wishlist</Text>
+                            </View>
+                            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/account/referrals')}>
+                            <View style={styles.menuItemLeft}>
+                                <Ionicons name="gift-outline" size={24} color="#10b981" />
+                                <Text style={styles.menuItemText}>Refer & Earn</Text>
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
                         </TouchableOpacity>
@@ -189,6 +244,24 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
+    },
+    adminSection: {
+        backgroundColor: '#fff',
+        marginTop: 12,
+        borderRadius: 12,
+        overflow: 'hidden',
+    },
+    adminBanner: {
+        backgroundColor: '#3b82f6',
+        padding: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    adminBannerText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     menuSection: {
         backgroundColor: '#fff',

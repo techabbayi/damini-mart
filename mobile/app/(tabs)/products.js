@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, Alert, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, Alert, ActivityIndicator, FlatList, Dimensions } from 'react-native';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '../../lib/api';
 import { useCartStore } from '../../store/cartStore';
 import { ProductCardSkeleton } from '../../components/SkeletonLoader';
+
+const { width } = Dimensions.get('window');
+const PRODUCT_IMAGE_HEIGHT = Math.min((width * 0.48 - 24) * 0.75, 140); // 75% of card width, max 140px
 
 // Memoized product card component for better performance
 const ProductCard = memo(({ product, onAddToCart }) => (
@@ -275,7 +278,7 @@ const styles = StyleSheet.create({
     },
     productImage: {
         width: '100%',
-        height: 120,
+        height: PRODUCT_IMAGE_HEIGHT,
         borderRadius: 8,
         marginBottom: 8,
     },

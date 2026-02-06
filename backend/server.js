@@ -24,6 +24,8 @@ import inventoryRoutes from './routes/inventory.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import wishlistRoutes from './routes/wishlist.routes.js';
+import referralRoutes from './routes/referral.routes.js';
+import aiRoutes from './routes/ai.routes.js';
 
 // Import error handler
 import { errorHandler } from './middleware/error.middleware.js';
@@ -74,7 +76,7 @@ if (process.env.NODE_ENV === 'development') {
 app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'OK',
-        message: 'Damini Mart API is running',
+        message: 'LocalBazar API is running',
         timestamp: new Date().toISOString()
     });
 });
@@ -93,6 +95,8 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/referrals', referralRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -114,7 +118,7 @@ const startServer = async () => {
     app.listen(PORT, '0.0.0.0', () => {
         console.log(`🚀 Server running on port ${PORT}`);
         console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-        console.log(`📱 Damini Mart API ready at http://localhost:${PORT}`);
+        console.log(`📱 LocalBazar API ready at http://localhost:${PORT}`);
         console.log(`📱 Network API ready at http://172.16.231.47:${PORT}`);
     });
 };

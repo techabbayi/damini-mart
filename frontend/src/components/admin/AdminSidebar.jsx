@@ -8,7 +8,7 @@ export default function AdminSidebar() {
     return (
         <aside className="fixed left-0 top-0 h-screen w-64 bg-gray-900 text-white p-6">
             <div className="mb-8">
-                <h2 className="text-2xl font-bold">Damini <span className="text-orange">Mart</span></h2>
+                <h2 className="text-2xl font-bold">Local<span className="text-orange">Bazar</span></h2>
                 <p className="text-sm text-gray-400 mt-1">Admin Panel</p>
             </div>
 

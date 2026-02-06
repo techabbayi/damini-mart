@@ -1,7 +1,7 @@
 {
-  "name": "damini-mart-backend",
+  "name": "localbazar-backend",
   "version": "1.0.0",
-  "description": "Damini Mart eCommerce Backend API",
+  "description": "LocalBazar eCommerce Backend API with AI Features",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -13,10 +13,12 @@
   },
   "keywords": [
     "ecommerce",
-    "supermarket",
+    "marketplace",
+    "ai",
+    "ar-vr",
     "nodejs"
   ],
-  "author": "Damini Mart",
+  "author": "LocalBazar",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.13.2",

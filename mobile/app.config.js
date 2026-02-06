@@ -1,7 +1,7 @@
 export default {
     expo: {
-        name: "Damini Mart",
-        slug: "damini-mart",
+        name: "LocalBazar",
+        slug: "localbazar",
         version: "1.1.0",
         orientation: "portrait",
         icon: "./assets/icon.png",
@@ -16,14 +16,14 @@ export default {
         ],
         ios: {
             supportsTablet: true,
-            bundleIdentifier: "com.daminimart.app"
+            bundleIdentifier: "com.localbazar.app"
         },
         android: {
             adaptiveIcon: {
                 foregroundImage: "./assets/adaptive-icon.png",
                 backgroundColor: "#f97316"
             },
-            package: "com.dharmabhai.daminimart",
+            package: "com.localbazar.app",
             versionCode: 5,
             softwareKeyboardLayoutMode: "pan",
             permissions: [
@@ -49,14 +49,14 @@ export default {
             [
                 "expo-location",
                 {
-                    locationAlwaysAndWhenInUsePermission: "Allow Damini Mart to access your location for accurate delivery."
+                    locationAlwaysAndWhenInUsePermission: "Allow LocalBazar to access your location for accurate delivery."
                 }
             ],
             "expo-font"
         ],
-        scheme: "daminimart",
+        scheme: "localbazar",
         extra: {
-            apiUrl: process.env.API_URL || "https://damini-mart.onrender.com/api",
+            apiUrl: process.env.API_URL || "https://localbazar.onrender.com/api",
             eas: {
                 projectId: "9ab527a9-5908-46c4-83ca-57cae68fc5f7"
             }
