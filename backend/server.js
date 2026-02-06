@@ -74,7 +74,7 @@ if (process.env.NODE_ENV === 'development') {
 app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'OK',
-        message: 'Damini Mart API is running',
+        message: 'LocalBazar API is running',
         timestamp: new Date().toISOString()
     });
 });
@@ -114,7 +114,7 @@ const startServer = async () => {
     app.listen(PORT, '0.0.0.0', () => {
         console.log(`🚀 Server running on port ${PORT}`);
         console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-        console.log(`📱 Damini Mart API ready at http://localhost:${PORT}`);
+        console.log(`📱 LocalBazar API ready at http://localhost:${PORT}`);
         console.log(`📱 Network API ready at http://172.16.231.47:${PORT}`);
     });
 };

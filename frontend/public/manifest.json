@@ -1,7 +1,7 @@
 {
-    "name": "Damini Mart",
-    "short_name": "DaminiMart",
-    "description": "Online grocery shopping app",
+    "name": "LocalBazar",
+    "short_name": "LocalBazar",
+    "description": "AI-powered local marketplace with AR try-on",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#f97316",

@@ -92,7 +92,7 @@ export default function Home() {
                 {/* Header */}
                 <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
                     <View>
-                        <Text style={styles.headerTitle}>Damini Mart</Text>
+                        <Text style={styles.headerTitle}>LocalBazar</Text>
                         <Text style={styles.headerSubtitle}>Fresh Groceries Delivered</Text>
                     </View>
                     <Ionicons name="notifications-outline" size={24} color="#fff" />
