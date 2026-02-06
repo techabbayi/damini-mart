@@ -132,6 +132,14 @@ export default function Account() {
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
                         </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/account/referrals')}>
+                            <View style={styles.menuItemLeft}>
+                                <Ionicons name="gift-outline" size={24} color="#10b981" />
+                                <Text style={styles.menuItemText}>Refer & Earn</Text>
+                            </View>
+                            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.menuSection}>
